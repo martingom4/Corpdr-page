@@ -1,6 +1,7 @@
 #aca inicialmente vamos a poner la conexion a la base de datos para que podamos interactuar con ella
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 class DataBase:
     _instance = None
@@ -20,6 +21,14 @@ class DataBase:
             raise RuntimeError("Database is already initialized")
         self.db.init_app(app) #COnecta la base de datos con la aplicacion
         self.is_initialized = True # cambiamos el estado de la base de datos a inicializado para que no se vuelva a inicializar
+
+    def test_connection(self):
+        try:
+            with self.db.engine.connect() as connection:
+                connection.execute(text("SELECT 1"))
+            print("Database connection successful")
+        except Exception as e:
+            print(f"Database connection failed: {e}")
 
     def close_session(self, session):
         try:
