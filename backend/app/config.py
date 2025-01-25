@@ -16,7 +16,10 @@ class Config:
     DB_USER = os.getenv('DB_USER', 'username')
     DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
     DB_NAME = os.getenv('DB_NAME', 'dbname')
-
+    SECRET_KEY = os.getenv('JWT_SECRET_KEY','secret')
 
     SQLALCHEMY_DATABASE_URI = f"{DB_DRIVER}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    SECRET_KEY = f"{SECRET_KEY}" #clave secreta para el token de autenticacion
+
+    # Verificar que la clave JWT se cargó correctamente
     SQLALCHEMY_TRACK_MODIFICATIONS = False
