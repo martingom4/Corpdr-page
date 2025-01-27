@@ -1,7 +1,16 @@
-class User():
+from sqlalchemy import Column, Integer, String
+from src.database.db import Base
 
-    def __init__(self, id, username, password, fullname) -> None:
-        self.id = id
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    password = Column(String)
+    name = Column(String)
+
+    def __init__(self, username, password, name) -> None:
         self.username = username
         self.password = password
-        self.fullname = fullname
+        self.name = name
+
