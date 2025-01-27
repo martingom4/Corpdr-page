@@ -1,7 +1,7 @@
 import traceback
 
 # Database
-from src.database.db_mysql import get_connection
+from src.database.db import get_connection
 # Logger
 from src.utils.Logger import Logger
 # Models
