@@ -19,4 +19,6 @@ def get_db():
     finally:
         db.close()
 
+def get_connection():
+    return engine.connect()
 
