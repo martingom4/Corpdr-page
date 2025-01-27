@@ -1,9 +1,8 @@
 from app.db import db
 from app.models.user import User
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from middleware import auth
 
-bcrypt = Bcrypt()
+
 class UserRepository:  # Corrige el nombre de la clase (convención PascalCase)
 
     def create_user(self, username, email, password):
@@ -12,7 +11,7 @@ class UserRepository:  # Corrige el nombre de la clase (convención PascalCase)
         if not self.user_unique(username, email):  # Verifica si el usuario o email ya existen
             raise ValueError("User or email already exists")
         # Crea y guarda el usuario en la base de datos
-        hashed_password =self.hash_password(password) # encriptamos la contraseña
+        hashed_password = auth.hash_password(password) # encriptamos la contraseña
         new_user = User(username=username, email=email, password=hashed_password) # creamos un nuevo usuario con password encriptado
         db.session.add(new_user)
         db.session.commit()
@@ -25,24 +24,16 @@ class UserRepository:  # Corrige el nombre de la clase (convención PascalCase)
         return existing_user is None  # Retorna True si no existe, False si ya existe
 
 
-    def validate_user(self, username, email, password): #esto es para verificar que los campos no esten vacios
+    def validate_user(self, username, email, password): #esto es para verificar que los campos no esten vacios es una buena idea pero no muestra que valor falta en caso de que falte alguno
         """Valida que los campos no estén vacíos."""
-        if not username:
-            raise ValueError("Username is required")
-        if not email:
-            raise ValueError("Email is required")
-        if not password:
-            raise ValueError("Password is required")
+        if not all([username, email, password]):
+            raise ValueError("All fields (username, email, password) are required")
+
+    def get_user(self, id):
+        """Obtiene el usuario por su ID."""
+        user = User.query.get(id)
+        if user is None:
+            raise ValueError("User not found")
+        return user  # Retorna el usuario con el ID especificado o lanza un error si no existe
 
 
-    # seria buenos crear un metodo para hashear la contraseña del usuario? no se si es necesario por el momento pero podriamos hacerlo
-    def hash_password(self, password):
-        return bcrypt.generate_password_hash(password).decode("utf-8")
-
-    def authenticate_user(self, email, password): #esto es para autenticar al usuario y devolver un token JWT 
-        """Autentica al usuario verificando su contraseña y devuelve un token JWT."""
-        user = User.query.filter_by(email=email).first()
-        if user and bcrypt.check_password_hash(user.password, password):
-            token = create_access_token(identity=user.id)
-            return token
-        return None
