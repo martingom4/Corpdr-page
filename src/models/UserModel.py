@@ -14,3 +14,6 @@ class User(Base):
         self.password = password
         self.name = name
 
+
+#revisar lo que se hace para el inicio de sesion 
+
