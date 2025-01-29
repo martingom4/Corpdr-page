@@ -15,5 +15,5 @@ class User(Base):
         self.name = name
 
 
-#revisar lo que se hace para el inicio de sesion 
+#revision si desde aca me deja hacer un push a la rama principal de mi proyect
 
